@@ -17105,6 +17105,7 @@ createVectorIndexStatement [IToken tUnique, bool? isClustered] returns [CreateVe
     SchemaObjectName vSchemaObjectName;
     Identifier vVectorColumn;
     FileGroupOrPartitionScheme vFileGroupOrPartitionScheme;
+    bool vHasMetric = false;
     
     if (tUnique != null)
     {
@@ -17141,6 +17142,21 @@ createVectorIndexStatement [IToken tUnique, bool? isClustered] returns [CreateVe
             vResult.OnFileGroupOrPartitionScheme = vFileGroupOrPartitionScheme;
         }
     )?
+    {
+        foreach (IndexOption vOption in vResult.IndexOptions)
+        {
+            if (vOption.OptionKind == IndexOptionKind.VectorMetric)
+            {
+                vHasMetric = true;
+                break;
+            }
+        }
+
+        if (!vHasMetric)
+        {
+            ThrowParseErrorException("SQL46144", LT(1), TSqlParserResource.SQL46144Message, CodeGenerationSupporter.Metric);
+        }
+    }
     ;
 
 indexKeyColumnList[CreateIndexStatement vParent]
@@ -28296,9 +28312,23 @@ xmlCompressionOption returns [XmlCompressionOption vResult = FragmentFactory.Cre
     ;
 
 vectorMetricOption returns [VectorMetricIndexOption vResult = FragmentFactory.CreateFragment<VectorMetricIndexOption>()]
-    : tMetric:Identifier EqualsSign tMetricValue:AsciiStringLiteral
+    : tMetric:Identifier
         {
             Match(tMetric, CodeGenerationSupporter.Metric);
+            if (LA(1) != EqualsSign)
+            {
+                ThrowParseErrorException("SQL46144", LT(1), TSqlParserResource.SQL46144Message, CodeGenerationSupporter.Metric);
+            }
+        }
+        EqualsSign
+        {
+            if (LA(1) != AsciiStringLiteral)
+            {
+                ThrowParseErrorException("SQL46144", LT(1), TSqlParserResource.SQL46144Message, CodeGenerationSupporter.Metric);
+            }
+        }
+        tMetricValue:AsciiStringLiteral
+        {
             vResult.OptionKind = IndexOptionKind.VectorMetric;
             vResult.MetricType = VectorMetricTypeHelper.Instance.ParseOption(tMetricValue);
 
