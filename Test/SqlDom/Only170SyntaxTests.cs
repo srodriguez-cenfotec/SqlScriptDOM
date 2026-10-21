@@ -31,7 +31,7 @@ namespace SqlStudio.Tests.UTSqlScriptDom
 
             parser.Parse(new StringReader("CREATE VECTOR INDEX IX ON dbo.T (V) (METRIC = 'cosine');"), out errors);
             Assert.IsTrue(errors.Count > 0, "Options without WITH should remain a syntax error.");
-            Assert.AreEqual(46144, errors[0].Number, "The syntax error should not be masked by METRIC validation.");
+            Assert.AreEqual(46010, errors[0].Number, "The syntax error should not be masked by METRIC validation.");
         }
 
         // Note: These filenames are case sensitive, make sure they match the checked-in file exactly

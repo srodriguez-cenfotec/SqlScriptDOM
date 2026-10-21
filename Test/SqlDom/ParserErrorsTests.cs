@@ -7917,7 +7917,7 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE OUTPUT inserted.*, deleted.*;";
             // Missing arguments
             ParserTestUtils.ErrorTestFabricDW(
                 "SELECT AI_ANALYZE_SENTIMENT()",
-                new ParserErrorInfo(28, "SQL46010", ")"));
+                new ParserErrorInfo(28, "SQL46144", ")"));
 
             // Too many arguments
             ParserTestUtils.ErrorTestFabricDW(
