@@ -7866,7 +7866,7 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE OUTPUT inserted.*, deleted.*;";
 
             // Metric value without quotes
             ParserTestUtils.ErrorTest170("CREATE VECTOR INDEX IX_Test ON dbo.Documents (VectorData) WITH (METRIC = cosine)",
-                new ParserErrorInfo(73, "SQL46010", "cosine"));
+                new ParserErrorInfo(73, "SQL46144", "METRIC"));
 
             // Type value without quotes
             ParserTestUtils.ErrorTest170("CREATE VECTOR INDEX IX_Test ON dbo.Documents (VectorData) WITH (TYPE = DiskANN)",
@@ -7882,7 +7882,7 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE OUTPUT inserted.*, deleted.*;";
 
             // Missing equals sign in option
             ParserTestUtils.ErrorTest170("CREATE VECTOR INDEX IX_Test ON dbo.Documents (VectorData) WITH (METRIC 'cosine')",
-                new ParserErrorInfo(72, "SQL46144", "METRIC"));
+                new ParserErrorInfo(64, "SQL46010", "METRIC"));
 
             // Incomplete WITH clause
             ParserTestUtils.ErrorTest170("CREATE VECTOR INDEX IX_Test ON dbo.Documents (VectorData) WITH",
@@ -7917,7 +7917,7 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE OUTPUT inserted.*, deleted.*;";
             // Missing arguments
             ParserTestUtils.ErrorTestFabricDW(
                 "SELECT AI_ANALYZE_SENTIMENT()",
-                new ParserErrorInfo(28, "SQL46144", ")"));
+                new ParserErrorInfo(28, "SQL46010", ")"));
 
             // Too many arguments
             ParserTestUtils.ErrorTestFabricDW(
