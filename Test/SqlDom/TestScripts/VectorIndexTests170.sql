@@ -1,6 +1,5 @@
 -- Basic VECTOR index creation
-CREATE VECTOR INDEX IX_Vector_Basic ON dbo.Documents (VectorData)
-WITH (METRIC = 'cosine');
+CREATE VECTOR INDEX IX_Vector_Basic ON dbo.Documents (VectorData);
 
 -- VECTOR index with METRIC option
 CREATE VECTOR INDEX IX_Vector_Cosine ON dbo.Documents (VectorData)

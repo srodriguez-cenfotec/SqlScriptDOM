@@ -1,5 +1,5 @@
 CREATE VECTOR INDEX IX_Vector_Basic
-    ON dbo.Documents (VectorData) WITH (METRIC = 'COSINE');
+    ON dbo.Documents (VectorData);
 
 CREATE VECTOR INDEX IX_Vector_Cosine
     ON dbo.Documents (VectorData) WITH (METRIC = 'COSINE');

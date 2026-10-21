@@ -17105,6 +17105,7 @@ createVectorIndexStatement [IToken tUnique, bool? isClustered] returns [CreateVe
     SchemaObjectName vSchemaObjectName;
     Identifier vVectorColumn;
     FileGroupOrPartitionScheme vFileGroupOrPartitionScheme;
+    bool vHasWithClause = false;
     bool vHasMetric = false;
     
     if (tUnique != null)
@@ -17134,6 +17135,7 @@ createVectorIndexStatement [IToken tUnique, bool? isClustered] returns [CreateVe
         // Greedy due to conflict with withCommonTableExpressionsAndXmlNamespaces
         options {greedy = true; } :
         With
+        { vHasWithClause = true; }
         indexOptionList[IndexAffectingStatement.CreateIndex, vResult.IndexOptions, vResult]
     )?
     (
@@ -17143,18 +17145,21 @@ createVectorIndexStatement [IToken tUnique, bool? isClustered] returns [CreateVe
         }
     )?
     {
-        foreach (IndexOption vOption in vResult.IndexOptions)
+        if (vHasWithClause)
         {
-            if (vOption.OptionKind == IndexOptionKind.VectorMetric)
+            foreach (IndexOption vOption in vResult.IndexOptions)
             {
-                vHasMetric = true;
-                break;
+                if (vOption.OptionKind == IndexOptionKind.VectorMetric)
+                {
+                    vHasMetric = true;
+                    break;
+                }
             }
-        }
 
-        if (!vHasMetric)
-        {
-            ThrowParseErrorException("SQL46144", LT(1), TSqlParserResource.SQL46144Message, CodeGenerationSupporter.Metric);
+            if (!vHasMetric)
+            {
+                ThrowParseErrorException("SQL46144", LT(1), TSqlParserResource.SQL46144Message, CodeGenerationSupporter.Metric);
+            }
         }
     }
     ;
